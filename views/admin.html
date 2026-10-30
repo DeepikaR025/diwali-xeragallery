@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Xerago Diwali – Admin</title><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+:root{--cream:#FFF7E8;--green:#005239;--gold:#DAA23A;--ink:#1a1a1a;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root{--ink:#1a1a1a}}
+body{margin:0;background:#efe3c8;color:var(--ink);font-family:Georgia,'Times New Roman',serif}
+.fade{animation:fade .35s ease both}@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pop{animation:pop .3s ease}@keyframes pop{50%{transform:scale(1.35)}}
+.btn{border-radius:999px;padding:12px 20px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;font-family:system-ui,sans-serif;transition:transform .15s}
+.btn:active{transform:scale(.95)}.pri{background:var(--green);color:#fff}.sec{border:2px solid var(--green);color:var(--green);background:transparent}
+</style></head><body><div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useMemo}=React;
+const P={flag:"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7",trash:"M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",check:"M20 6 9 17l-5-5",shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",user:"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8",help:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01",camera:"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 10a3 3 0 1 0 0 6 3 3 0 0 0 0-6",
+switch:"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5",
+x:"M18 6 6 18M6 6l12 12",download:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+share:"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13",
+heart:"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z",
+retake:"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5",
+img:"M3 3h18v18H3zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M21 15l-5-5L5 21",
+scan:"M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"};
+const Ic=({n,s=20,fill})=><svg width={s} height={s} viewBox="0 0 24 24" fill={fill?"currentColor":"none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={P[n]}/></svg>;
+const Logo=({c="#005239",s=28})=><div style={{color:c,fontSize:s,letterSpacing:3,fontFamily:'system-ui',fontWeight:700}}>XERAGO</div>;
+const api=async(u,o={})=>{const r=await fetch(u,{credentials:'same-origin',...o,headers:{'Content-Type':'application/json','X-XDM':'1'},body:o.body?JSON.stringify(o.body):undefined});let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw Object.assign(new Error(j.error||'Something went wrong'),{status:r.status,code:j.code});return j};
+const Sheet=({children,w='max-w-sm'})=><div className="fixed inset-0 z-40 bg-black/50 flex items-end sm:items-center justify-center p-4"><div className={`fade bg-[#FFF7E8] rounded-3xl p-6 w-full ${w} border-2 border-[#DAA23A] max-h-[90vh] overflow-auto`} style={{fontFamily:'system-ui'}}>{children}</div></div>;
+const inp="border-2 border-[#005239]/30 rounded-xl p-3 bg-white w-full";
+const fmt=t=>new Date(t).toLocaleString([],{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const Badge=({s})=>{const m={pending:['Pending','#b7791f'],approved:['Approved','#005239'],rejected:['Rejected','#b91c1c']}[s];return <span className="text-[10px] text-white px-2 py-0.5 rounded-full" style={{background:m[1]}}>{m[0]}</span>};
+function Admin(){
+  const [me,setMe]=useState(undefined),[ae,setAe]=useState(''),[step,setStep]=useState(0),[otp,setOtp]=useState(''),[toast,setToast]=useState(''),[tab,setTab]=useState('photos'),[photos,setPhotos]=useState([]),[flt,setFlt]=useState('all'),[det,setDet]=useState(null),[st,setSt]=useState({}),[admins,setAdmins]=useState([]),[log,setLog]=useState([]),[nm,setNm]=useState(''),[ex,setEx]=useState(''),[bust,setBust]=useState(0);
+  const say=m=>{setToast(m);setTimeout(()=>setToast(''),2600)};
+  const run=async fn=>{try{return await fn()}catch(e){say(e.message);if(e.status===401&&me)setMe(null)}};
+  const load=async m=>{const[p,s]=await Promise.all([api('/api/admin/photos'),api('/api/admin/settings')]);setPhotos(p);setSt(s);if(m.role==='Super admin'){setAdmins(await api('/api/admin/admins'));setLog(await api('/api/admin/audit'))}};
+  useEffect(()=>{api('/api/admin/me').then(m=>{setMe(m);load(m)}).catch(()=>setMe(null))},[]);
+  const refresh=()=>run(()=>load(me));
+  const req=()=>run(async()=>{const r=await api('/api/admin/auth/request-code',{method:'POST',body:{email:ae}});setStep(1);say(r.devCode?'Dev code: '+r.devCode:r.message)});
+  const ver=()=>run(async()=>{const m=await api('/api/admin/auth/verify',{method:'POST',body:{email:ae,code:otp}});setMe(m);setOtp('');setStep(0);await load(m)});
+  const out=()=>run(async()=>{await api('/api/admin/auth/logout',{method:'POST'});setMe(null);setAe('')});
+  const setStatus=(id,s)=>run(async()=>{await api(`/api/admin/photos/${id}/status`,{method:'POST',body:{status:s}});say(s==='approved'?'Approved':'Rejected');await load(me)});
+  const restore=id=>run(async()=>{await api(`/api/admin/photos/${id}/restore`,{method:'POST'});say('Restored');await load(me)});
+  const put=b=>run(async()=>{setSt(await api('/api/admin/settings',{method:'PUT',body:b}));say('Saved')});
+  const match=(p,k)=>k==='all'||(k==='reported'?p.hidden:p.status===k);
+  const fl=photos.filter(p=>match(p,flt));
+  const acts=p=>p.hidden?[['Restore',()=>restore(p.id),0],['Reject',()=>setStatus(p.id,'rejected'),1]]:p.status==='approved'?[['Reject',()=>setStatus(p.id,'rejected'),1]]:p.status==='pending'?[['Approve',()=>setStatus(p.id,'approved'),0],['Reject',()=>setStatus(p.id,'rejected'),1]]:[['Approve',()=>setStatus(p.id,'approved'),0]];
+  const dp=photos.find(p=>p.id===det),sup=me&&me.role==='Super admin';
+  if(me===undefined)return <div className="min-h-screen flex items-center justify-center" style={{background:'#FFF7E8'}}><Logo/></div>;
+  return <div className={`mx-auto ${me?'max-w-3xl':'max-w-md'} min-h-screen`} style={{background:'#FFF7E8',fontFamily:'system-ui'}}>
+    {toast&&<div className="fade fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#005239] text-white text-sm px-4 py-2 rounded-full shadow-lg text-center" style={{maxWidth:'90%'}}>{toast}</div>}
+    {!me&&<div className="fade p-6 flex flex-col gap-3 pt-14"><div className="text-center"><Logo s={26}/></div><h2 className="text-2xl text-[#005239] font-bold text-center" style={{fontFamily:'Georgia'}}>Admin sign-in</h2>
+      {step===0?<><p className="text-xs text-center text-stone-500">Only emails with admin permission can sign in. A one-time code is sent to your email.</p><input className={inp} type="email" placeholder="Work email" value={ae} onChange={e=>setAe(e.target.value)}/><button className="btn pri" onClick={req}><Ic n="shield" s={18}/>Send verification code</button></>
+      :<><p className="text-xs text-center text-stone-500">Enter the 6-digit code sent to {ae}.</p><input className={inp} inputMode="numeric" maxLength={6} placeholder="123456" value={otp} onChange={e=>setOtp(e.target.value)}/><button className="btn pri" onClick={ver}>Verify & sign in</button><button className="text-xs text-stone-500" onClick={()=>setStep(0)}>Use a different email</button></>}</div>}
+    {me&&<div className="fade p-4 pb-10"><div className="flex items-center justify-between mb-3"><div><Logo s={20}/><div className="text-[11px] text-stone-500 mt-1">{me.email} · <b>{me.role}</b></div></div><button className="btn sec !py-1 !px-3 text-xs" onClick={out}>Sign out</button></div>
+      <div className="flex bg-[#005239]/10 rounded-full p-1 mb-4 text-sm">{[['photos','Photos'],['qr','QR scanner'],['access','Access']].map(([k,l])=><button key={k} onClick={()=>setTab(k)} className={`flex-1 py-2 rounded-full font-semibold ${tab===k?'bg-[#005239] text-white':'text-[#005239]'}`}>{l}</button>)}</div>
+      {tab==='photos'&&<div><div className="flex flex-wrap gap-2 mb-3">{['all','pending','approved','rejected','reported'].map(k=><button key={k} onClick={()=>setFlt(k)} className={`px-3 py-1 rounded-full text-xs font-semibold border ${flt===k?'bg-[#DAA23A] text-white border-[#DAA23A]':'border-[#005239]/30 text-[#005239]'}`}>{k[0].toUpperCase()+k.slice(1)} ({photos.filter(p=>match(p,k)).length})</button>)}</div>
+        <div className="grid grid-cols-3 gap-2 mb-4"><a className="btn pri !px-2 text-xs" href={`/api/admin/zip?status=${flt}`}><Ic n="download" s={16}/>ZIP ({fl.length})</a><button className="btn sec !px-2 text-xs" onClick={()=>put({autoPublish:!st.autoPublish})}>Auto-publish: {st.autoPublish?'ON':'OFF'}</button><button className="btn sec !px-2 text-xs" onClick={()=>put({voting:!st.voting})}>Voting: {st.voting?'Open':'Paused'}</button></div>
+        <button className="text-xs underline text-stone-500 mb-3" onClick={refresh}>Refresh</button>
+        {!fl.length&&<p className="text-center text-sm text-stone-500 py-10">No photos in this view.</p>}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">{fl.map(p=><div key={p.id} className="bg-white rounded-xl p-2 shadow"><img src={p.url} className="w-full rounded cursor-pointer" alt="" onClick={()=>setDet(p.id)}/>
+          <div className="mt-2 text-xs"><div className="font-bold text-[#005239] truncate">{p.name}</div><div className="text-stone-500">{p.empId} · {p.dept}</div><div className="flex items-center gap-2 mt-1"><Badge s={p.status}/>{p.hidden&&<span className="text-[10px] bg-red-100 text-red-700 px-2 rounded-full">Reported</span>}<span className="text-stone-500">♥ {p.votes}</span></div></div>
+          <div className="flex gap-1 mt-2">{acts(p).map(([l,fn,bad])=><button key={l} onClick={fn} className={`flex-1 text-xs font-semibold rounded-full py-1 ${bad?'border border-red-600 text-red-700':'bg-[#005239] text-white'}`}>{l}</button>)}</div></div>)}</div></div>}
+      {tab==='qr'&&<div className="flex flex-col items-center gap-3 text-center max-w-md mx-auto"><div className="p-3 bg-white rounded-3xl shadow border-4 border-[#DAA23A]/40" style={{opacity:st.expired?.35:1}}><img src={'/api/admin/qr.png?'+bust} className="w-56 h-56" alt="QR"/></div>
+        <a className="btn sec text-sm" href="/api/admin/qr.png" download="xerago-diwali-qr.png"><Ic n="download" s={16}/>Download QR (PNG)</a>
+        <span className="text-xs px-3 py-1 rounded-full text-white" style={{background:st.expired?'#b91c1c':'#005239'}}>{st.expired?'● Expired':'● Active'}</span><p className="text-[11px] text-stone-500 break-all">{st.scanUrl}</p>
+        <label className="text-xs text-stone-600 w-full text-left">Auto-expire at<input type="datetime-local" className={inp+' mt-1'} value={ex} onChange={e=>setEx(e.target.value)}/></label>
+        <div className="grid grid-cols-2 gap-2 w-full"><button className="btn pri text-sm" onClick={()=>ex?put({expiresAt:new Date(ex).toISOString(),manualExpire:false}):say('Pick a date and time')}>Set expiry</button><button className="btn sec text-sm" onClick={()=>put({manualExpire:true})}>Expire now</button></div>
+        <button className="btn sec w-full text-sm" onClick={()=>{setEx('');put({manualExpire:false,expiresAt:null})}}>Reactivate / clear expiry</button>
+        {st.expiresAt&&<p className="text-xs text-stone-500">Scheduled expiry: {fmt(st.expiresAt)}</p>}<p className="text-[11px] text-stone-400">Expiry is enforced on the server: scans, sign-ins and uploads are blocked.</p></div>}
+      {tab==='access'&&<div className="max-w-md mx-auto">{!sup?<p className="text-center text-sm text-stone-500 py-10">Only the super admin can manage admin access.</p>:<div>
+        <h3 className="font-semibold text-sm mb-2">People with admin access</h3>
+        {admins.map(a=><div key={a.email} className="flex items-center justify-between bg-white rounded-xl p-3 mb-2 text-sm"><div><div className="font-semibold">{a.email}</div><div className="text-[11px] text-stone-500">{a.role}</div></div>{a.role!=='Super admin'&&<button className="text-xs text-red-700 border border-red-600 rounded-full px-3 py-1" onClick={()=>run(async()=>{setAdmins(await api('/api/admin/admins/'+encodeURIComponent(a.email),{method:'DELETE'}));say('Access revoked')})}>Revoke</button>}</div>)}
+        <h3 className="font-semibold text-sm mt-4 mb-2">Grant admin access</h3><input className={inp} type="email" placeholder="colleague@xerago.com" value={nm} onChange={e=>setNm(e.target.value)}/>
+        <button className="btn pri w-full mt-2" onClick={()=>run(async()=>{setAdmins(await api('/api/admin/admins',{method:'POST',body:{email:nm}}));setNm('');say('Admin access granted')})}><Ic n="shield" s={18}/>Grant access</button>
+        <h3 className="font-semibold text-sm mt-6 mb-2">Activity log</h3><div className="bg-white rounded-xl p-3 text-[11px] max-h-60 overflow-auto">{log.map((l,i)=><div key={i} className="py-1 border-b border-stone-100"><b>{l.who}</b> · {l.action} {l.detail} <span className="text-stone-400">· {fmt(l.at)}</span></div>)}{!log.length&&'No activity yet.'}</div></div>}</div>}
+    </div>}
+    {me&&dp&&<Sheet w="max-w-md"><div className="flex justify-between items-center mb-3"><h3 className="text-lg text-[#005239] font-bold" style={{fontFamily:'Georgia'}}>Photo details</h3><button onClick={()=>setDet(null)} aria-label="Close"><Ic n="x" s={22}/></button></div>
+      <img src={dp.url} className="w-full max-h-[50vh] object-contain rounded-xl bg-white" alt=""/>
+      <div className="text-sm mt-3 space-y-1"><div><b>Name:</b> {dp.name}</div><div><b>Employee ID:</b> {dp.empId}</div><div><b>Department:</b> {dp.dept}</div><div><b>Posted:</b> {fmt(dp.at)}</div><div><b>Votes:</b> {dp.votes} · <b>Status:</b> {dp.status}{dp.hidden?` · Reported (${dp.hidden})`:''}</div></div>
+      <div className="flex gap-2 mt-4">{acts(dp).map(([l,fn,bad])=><button key={l} onClick={()=>{fn();setDet(null)}} className={`btn flex-1 text-sm ${bad?'sec !border-red-600 !text-red-700':'pri'}`}>{l}</button>)}<a className="btn sec text-sm" href={dp.url} download={`${dp.empId}.png`}><Ic n="download" s={16}/></a></div></Sheet>}
+  </div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<Admin/>);
+</script></body></html>
